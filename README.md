@@ -1,5 +1,5 @@
 # VideoDirectories
-make an auto-populated video gallery based on videos in a directory
+make an auto-populated video gallery based on videos in a directory (ffmpeg required)
 
 ## Installation instructions
 ```
