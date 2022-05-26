@@ -1,0 +1,11 @@
+#!/bin/bash
+html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Document</title><style>.videos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}.video{display:flex;flex-direction:column;width:200px}.thumbnail{position:relative}span.duration{position:absolute;color:#fff;bottom:6px;right:4px;background:#000;padding:1px 2px}img.thumb{width:100%}.title{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}</style></head><body><div class="container"><a href=".."><< Back</a><div class="videos">'
+for f in *.mp4; do
+	echo "${f%.mp4}.jpg"
+	rm -f "${f%.mp4}.jpg"
+	thumb=$(ffmpeg -i "$f" -ss 00:00:05 -vframes 1 -s 480x320 "${f%.mp4}.jpg" 2>&1 | grep Duration | cut -d ',' -f1)
+	duration=$(echo "$thumb" | cut -d ' ' -f4 | cut -d '.' -f1)
+	html+="<a href=\"$f\" target=\"_blank\"><div class=\"video\"><div class=\"thumbnail\"><img class=\"thumb\" src=\"${f%.mp4}.jpg\"><span class=\"duration\">$duration</span></div><div class=\"title\">${f%.mp4}</div></div></a>"
+done
+html+='</div></div></body></html>'
+echo $html > index.html
