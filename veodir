@@ -3,7 +3,7 @@ html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equi
 for f in *.mp4; do
 	echo "${f%.mp4}.jpg"
 	rm -f "${f%.mp4}.jpg"
-	thumb=$(ffmpeg -i "$f" -ss 00:00:05 -vframes 1 -s 480x320 "${f%.mp4}.jpg" 2>&1 | grep Duration | cut -d ',' -f1)
+	thumb=$(ffmpeg -i "$f" -ss 00:00:05 -vframes 1 -filter_complex "[0]scale=426:240,select='${ffselect}',setpts='N/FRAME_RATE/TB',setsar=1,boxblur=20:20[b];[0]scale=-1:240,select='${ffselect}',setpts='N/FRAME_RATE/TB'[v];[b][v]overlay=(W-w)/2" "${f%.mp4}.jpg" 2>&1 | grep Duration | cut -d ',' -f1)
 	duration=$(echo "$thumb" | cut -d ' ' -f4 | cut -d '.' -f1)
 	html+="<a href=\"$f\" target=\"_blank\"><div class=\"video\"><div class=\"thumbnail\"><img class=\"thumb\" src=\"${f%.mp4}.jpg\"><span class=\"duration\">$duration</span></div><div class=\"title\">${f%.mp4}</div></div></a>"
 done
